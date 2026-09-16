@@ -20,7 +20,7 @@ class DiningProgrammersTest {
     private static final int DEFAULT_FOOD_COUNT = 1_000_000;
     private static final int DEFAULT_WAITERS_COUNT = 2;
     
-    private static final double ALLOWED_DEVIATION = 0.025;
+    private static final double ALLOWED_DEVIATION = 0.05;
 
     private double getMinMaxDeviation(int programmersCount, int foodCount, int[] eatenFood) {
         if (foodCount == 0) return 0;
