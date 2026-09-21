@@ -1,42 +1,45 @@
 package org.labs;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.locks.ReentrantLock;
+import lombok.RequiredArgsConstructor;
 
-public class Programmer extends Thread {
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Supplier;
+
+@RequiredArgsConstructor
+public class Programmer implements Supplier<Integer> {
+
+    private final static int EATING_DURATION_MICROSECONDS = 7;
+    private final static int DISCUSSING_DURATION_MICROSECONDS = 5;
 
     private final ReentrantLock firstSpoon;
     private final ReentrantLock secondSpoon;
     private final Waiters waiters;
-    private int eaten;
-
-    public Programmer(ReentrantLock firstSpoon, ReentrantLock secondSpoon, Waiters waiters) {
-        this.firstSpoon = firstSpoon;
-        this.secondSpoon = secondSpoon;
-        this.waiters = waiters;
-        this.eaten = 0;
-    }
 
     @Override
-    public void run() {
-        try {
-            while (waiters.askFood().get()) {
-                takeSpoons();
-                try {
-                    ++eaten;
-                } finally {
-                    putSpoons();
-                }
+    public Integer get() {
+        int eaten = 0;
 
-                Thread.yield();
+        while (waiters.askFood(eaten)) {
+            takeSpoons();
+            try {
+                eat();
+                ++eaten;
+            } finally {
+                putSpoons();
             }
-        } catch (InterruptedException | ExecutionException e) {
-            Thread.currentThread().interrupt();
+
+            discuss();
         }
+
+        return eaten;
     }
 
-    public int getEaten() {
-        return eaten;
+    private void eat() {
+        TimerUtils.waitMicroseconds(EATING_DURATION_MICROSECONDS);
+    }
+
+    private void discuss() {
+        TimerUtils.waitMicroseconds(DISCUSSING_DURATION_MICROSECONDS);
     }
 
     private void takeSpoons() {

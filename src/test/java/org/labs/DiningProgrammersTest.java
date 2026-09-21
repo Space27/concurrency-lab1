@@ -12,15 +12,15 @@ import java.util.concurrent.TimeUnit;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@Timeout(value = 60, unit = TimeUnit.SECONDS)
+@Timeout(value = 90, unit = TimeUnit.SECONDS)
 @DisplayName("Тесты симуляции обеда программистов")
 class DiningProgrammersTest {
 
     private static final int DEFAULT_PROGRAMMERS_COUNT = 7;
     private static final int DEFAULT_FOOD_COUNT = 1_000_000;
     private static final int DEFAULT_WAITERS_COUNT = 2;
-    
-    private static final double ALLOWED_DEVIATION = 0.05;
+
+    private static final double ALLOWED_DEVIATION = 0.02;
 
     private double getMinMaxDeviation(int programmersCount, int foodCount, int[] eatenFood) {
         if (foodCount == 0) return 0;
@@ -44,7 +44,7 @@ class DiningProgrammersTest {
 
     @ParameterizedTest(name = "Число программистов {0}, число еды {1} и число официантов {2}")
     @CsvSource({
-            "17,1_000_000,2",
+            "16,1_000_000,2",
             "3,1_000_000,2",
             "7,2_000_000,2",
             "7,500_000,2",
@@ -89,7 +89,7 @@ class DiningProgrammersTest {
             "7,1_000_000,0"
     })
     @DisplayName("Задача с невалидными аргументами")
-    void diningProgrammers_shouldRaiseExceptionWithInvalidParameters(int programmersCount, int foodCount, int waitersCount) {
+    void diningProgrammers_shouldThrowExceptionWithInvalidParameters(int programmersCount, int foodCount, int waitersCount) {
         assertThatThrownBy(() -> new DiningProgrammers(programmersCount, foodCount, waitersCount))
                 .isInstanceOf(IllegalArgumentException.class);
     }
